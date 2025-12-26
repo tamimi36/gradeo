@@ -1,0 +1,96 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  /* Apple-like font smoothing */
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+@layer base {
+  html {
+    font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+  }
+
+  body {
+    @apply bg-zinc-50 text-zinc-900 dark:bg-black dark:text-white selection:bg-blue-500/20;
+  }
+
+  /* Typography Hierarchy */
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    @apply tracking-tight font-semibold text-balance;
+  }
+
+  h1 {
+    @apply text-3xl md:text-4xl lg:text-5xl font-bold;
+  }
+
+  h2 {
+    @apply text-2xl md:text-3xl font-semibold;
+  }
+
+  h3 {
+    @apply text-xl md:text-2xl font-semibold;
+  }
+}
+
+@layer components {
+
+  /* Premium Card Styles */
+  .swiss-card {
+    @apply bg-white dark:bg-zinc-900 rounded-[2rem] border border-zinc-200/60 dark:border-zinc-800 shadow-[0_4px_20px_-4px_rgba(0, 0, 0, 0.03)] dark:shadow-none transition-all duration-300 hover:shadow-[0_8px_30px_-4px_rgba(0, 0, 0, 0.06)];
+  }
+
+  .glass-card {
+    @apply bg-white/70 dark:bg-zinc-900/70 backdrop-blur-2xl border border-white/40 dark:border-zinc-800/50 shadow-xl shadow-zinc-900/5;
+  }
+
+  /* Solid Buttons - Sophisticated & Tactile */
+  .btn-primary {
+    @apply px-6 py-3 bg-zinc-900 dark:bg-white text-white dark:text-black font-semibold rounded-2xl hover:scale-[1.01] active:scale-[0.97] transition-all duration-200 shadow-[0_4px_12px_rgba(0, 0, 0, 0.12)] border border-transparent dark:border-zinc-200;
+  }
+
+  .btn-secondary {
+    @apply px-6 py-3 bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 text-zinc-900 dark:text-white font-medium rounded-2xl hover:bg-zinc-50 dark:hover:bg-zinc-800 hover:border-zinc-300 dark:hover:border-zinc-700 active:scale-[0.97] transition-all duration-200;
+  }
+
+  .btn-ghost {
+    @apply px-4 py-2 text-zinc-500 hover:text-zinc-900 dark:hover:text-white font-medium rounded-xl hover:bg-zinc-100/50 dark:hover:bg-zinc-800/50 transition-all duration-200 active:scale-[0.97];
+  }
+}
+
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+
+  .text-pretty {
+    text-wrap: pretty;
+  }
+
+  /* Custom Focus Ring for Accessibility + Aesthetic */
+  .focus-ring {
+    @apply focus:outline-none focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500/50 transition-shadow;
+  }
+
+  /* Hide scrollbar */
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+
+  .no-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+
+  /* Subtle Gradient Overlay */
+  .bg-gradient-soft {
+    @apply bg-gradient-to-br from-white to-zinc-50 dark:from-zinc-900 dark:to-black;
+  }
+}
