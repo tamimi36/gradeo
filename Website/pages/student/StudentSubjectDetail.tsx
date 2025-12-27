@@ -46,7 +46,7 @@ const StudentSubjectDetail: React.FC = () => {
                 <div className="grid grid-cols-1 md:grid-cols-12 gap-6">
                     {/* Main Stats Card (4 cols) */}
                     <div className="md:col-span-12 lg:col-span-4 space-y-6">
-                        <div className="bg-white dark:bg-zinc-900 rounded-[2.5rem] p-8 border border-zinc-200/50 dark:border-zinc-800 shadow-sm flex flex-col items-center text-center">
+                        <div className="bg-white dark:bg-zinc-900 rounded-2xl p-8 border border-zinc-200/50 dark:border-zinc-800 shadow-sm flex flex-col items-center text-center">
                             <div className="relative w-48 h-48 mb-6">
                                 <svg className="w-full h-full transform -rotate-90 drop-shadow-lg">
                                     <circle
@@ -68,7 +68,7 @@ const StudentSubjectDetail: React.FC = () => {
                                     />
                                 </svg>
                                 <div className="absolute inset-0 flex flex-col items-center justify-center">
-                                    <span className="text-5xl font-black text-zinc-900 dark:text-white tracking-tighter">88%</span>
+                                    <span className="text-4xl font-bold text-zinc-900 dark:text-white tracking-tight">88%</span>
                                     <span className="text-xs font-bold uppercase text-zinc-400 tracking-widest mt-1">Grade</span>
                                 </div>
                             </div>
@@ -80,17 +80,17 @@ const StudentSubjectDetail: React.FC = () => {
 
                             <div className="grid grid-cols-2 gap-3 w-full">
                                 <div className="p-4 rounded-2xl bg-zinc-50 dark:bg-zinc-800/50 border border-zinc-100 dark:border-zinc-800/50 flex flex-col items-center">
-                                    <span className="text-2xl font-black text-zinc-900 dark:text-white">9</span>
+                                    <span className="text-xl font-bold text-zinc-900 dark:text-white">9</span>
                                     <span className="text-[10px] font-bold text-zinc-400 uppercase tracking-widest">Tests</span>
                                 </div>
                                 <div className="p-4 rounded-2xl bg-zinc-50 dark:bg-zinc-800/50 border border-zinc-100 dark:border-zinc-800/50 flex flex-col items-center">
-                                    <span className="text-2xl font-black text-zinc-900 dark:text-white">A</span>
+                                    <span className="text-xl font-bold text-zinc-900 dark:text-white">A</span>
                                     <span className="text-[10px] font-bold text-zinc-400 uppercase tracking-widest">Target</span>
                                 </div>
                             </div>
                         </div>
 
-                        <div className="bg-gradient-to-br from-blue-600 to-indigo-700 rounded-[2.5rem] p-8 text-white relative overflow-hidden group shadow-lg shadow-blue-500/20">
+                        <div className="bg-gradient-to-br from-blue-600 to-indigo-700 rounded-2xl p-8 text-white relative overflow-hidden group shadow-lg shadow-blue-500/20">
                             <div className="relative z-10">
                                 <div className="w-12 h-12 rounded-2xl bg-white/10 flex items-center justify-center mb-4 backdrop-blur-sm">
                                     <Sparkles size={24} className="text-blue-200" />
@@ -113,7 +113,7 @@ const StudentSubjectDetail: React.FC = () => {
                     {/* Detailed Breakdown (8 cols) */}
                     <div className="md:col-span-12 lg:col-span-8 space-y-6">
                         {/* Strengths */}
-                        <div className="bg-white dark:bg-zinc-900 rounded-[2.5rem] p-8 border border-zinc-200/50 dark:border-zinc-800 shadow-sm">
+                        <div className="bg-white dark:bg-zinc-900 rounded-2xl p-8 border border-zinc-200/50 dark:border-zinc-800 shadow-sm">
                             <h4 className="flex items-center gap-3 text-xs font-black text-zinc-400 uppercase tracking-widest mb-6 border-b border-zinc-100 dark:border-zinc-800 pb-4">
                                 <CheckCircle2 size={16} className="text-emerald-500" />
                                 Core Strengths
@@ -137,7 +137,7 @@ const StudentSubjectDetail: React.FC = () => {
                         </div>
 
                         {/* Weaknesses */}
-                        <div className="bg-white dark:bg-zinc-900 rounded-[2.5rem] p-8 border border-zinc-200/50 dark:border-zinc-800 shadow-sm">
+                        <div className="bg-white dark:bg-zinc-900 rounded-2xl p-8 border border-zinc-200/50 dark:border-zinc-800 shadow-sm">
                             <h4 className="flex items-center gap-3 text-xs font-black text-zinc-400 uppercase tracking-widest mb-6 border-b border-zinc-100 dark:border-zinc-800 pb-4">
                                 <AlertCircle size={16} className="text-orange-500" />
                                 Areas for Improvement
@@ -163,7 +163,7 @@ const StudentSubjectDetail: React.FC = () => {
                         </div>
 
                         {/* Recent Topics */}
-                        <div className="bg-white dark:bg-zinc-900 rounded-[2.5rem] p-8 border border-zinc-200/50 dark:border-zinc-800 shadow-sm">
+                        <div className="bg-white dark:bg-zinc-900 rounded-2xl p-8 border border-zinc-200/50 dark:border-zinc-800 shadow-sm">
                             <div className="flex items-center justify-between mb-6 border-b border-zinc-100 dark:border-zinc-800 pb-4">
                                 <h4 className="flex items-center gap-3 text-xs font-black text-zinc-400 uppercase tracking-widest">
                                     <BookOpen size={16} className="text-zinc-500" />

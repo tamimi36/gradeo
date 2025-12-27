@@ -13,6 +13,7 @@ from app.models.submission import Submission, SubmissionAnswer
 from app.models.grade import Grade
 from app.models.analytics import QuestionDifficulty, AIAnalysisCache
 from app.services.ai_service import ai_service
+from sqlalchemy import func
 import hashlib
 import json
 from functools import wraps
@@ -601,6 +602,8 @@ class CacheStats(Resource):
             })
 
         return {
+            'status': 'success',
+            'message': 'AI cache statistics retrieved successfully',
             'total_cached_items': total_cached,
             'total_cache_hits': total_hits,
             'by_type': type_stats,

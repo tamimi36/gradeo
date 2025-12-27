@@ -10,21 +10,17 @@
 
 @layer base {
   html {
-    font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+    font-family: "SF Pro Display", "SF Pro Text", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
   }
 
   body {
     @apply bg-zinc-50 text-zinc-900 dark:bg-black dark:text-white selection:bg-blue-500/20;
   }
 
-  /* Typography Hierarchy */
-  h1,
-  h2,
-  h3,
-  h4,
-  h5,
-  h6 {
-    @apply tracking-tight font-semibold text-balance;
+  /* Typography Hierarchy - Editorial Style */
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-semibold text-balance tracking-tight;
+    letter-spacing: -0.02em; /* Negative tracking for headings */
   }
 
   h1 {
@@ -42,27 +38,16 @@
 
 @layer components {
 
-  /* Premium Card Styles */
+  /* Swiss Card - refined */
   .swiss-card {
-    @apply bg-white dark:bg-zinc-900 rounded-[2rem] border border-zinc-200/60 dark:border-zinc-800 shadow-[0_4px_20px_-4px_rgba(0, 0, 0, 0.03)] dark:shadow-none transition-all duration-300 hover:shadow-[0_8px_30px_-4px_rgba(0, 0, 0, 0.06)];
+    @apply bg-white dark:bg-zinc-900 rounded-[2rem] border border-zinc-200/60 dark:border-zinc-800 shadow-[0_2px_10px_-4px_rgba(0,0,0,0.02)] transition-all duration-300;
   }
 
-  .glass-card {
-    @apply bg-white/70 dark:bg-zinc-900/70 backdrop-blur-2xl border border-white/40 dark:border-zinc-800/50 shadow-xl shadow-zinc-900/5;
+  /* Editorial Buttons */
+  .btn-editorial {
+    @apply px-6 py-3 border border-zinc-200 dark:border-zinc-800 rounded-xl font-medium text-zinc-900 dark:text-white bg-transparent hover:bg-zinc-50 dark:hover:bg-zinc-800 transition-all duration-200 active:scale-[0.99];
   }
 
-  /* Solid Buttons - Sophisticated & Tactile */
-  .btn-primary {
-    @apply px-6 py-3 bg-zinc-900 dark:bg-white text-white dark:text-black font-semibold rounded-2xl hover:scale-[1.01] active:scale-[0.97] transition-all duration-200 shadow-[0_4px_12px_rgba(0, 0, 0, 0.12)] border border-transparent dark:border-zinc-200;
-  }
-
-  .btn-secondary {
-    @apply px-6 py-3 bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 text-zinc-900 dark:text-white font-medium rounded-2xl hover:bg-zinc-50 dark:hover:bg-zinc-800 hover:border-zinc-300 dark:hover:border-zinc-700 active:scale-[0.97] transition-all duration-200;
-  }
-
-  .btn-ghost {
-    @apply px-4 py-2 text-zinc-500 hover:text-zinc-900 dark:hover:text-white font-medium rounded-xl hover:bg-zinc-100/50 dark:hover:bg-zinc-800/50 transition-all duration-200 active:scale-[0.97];
-  }
 }
 
 @layer utilities {
@@ -74,9 +59,13 @@
     text-wrap: pretty;
   }
 
-  /* Custom Focus Ring for Accessibility + Aesthetic */
-  .focus-ring {
-    @apply focus:outline-none focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500/50 transition-shadow;
+  /* Specific Tracking Utilities */
+  .tracking-editorial {
+    letter-spacing: -0.02em;
+  }
+  
+  .tracking-body {
+    letter-spacing: 0em;
   }
 
   /* Hide scrollbar */
@@ -87,10 +76,5 @@
   .no-scrollbar {
     -ms-overflow-style: none;
     scrollbar-width: none;
-  }
-
-  /* Subtle Gradient Overlay */
-  .bg-gradient-soft {
-    @apply bg-gradient-to-br from-white to-zinc-50 dark:from-zinc-900 dark:to-black;
   }
 }

@@ -1,9 +1,6 @@
 """
 OCR Management API Routes (Admin Only)
-NOTE: OCR functionality has been disabled. All endpoints return hardcoded responses.
-Original OCR/Celery code is backed up in old_code/ocr_old.py
 """
-from datetime import datetime
 from flask import Blueprint
 from flask_restx import Resource, Namespace, fields
 from flask_jwt_extended import jwt_required, get_jwt_identity
@@ -67,22 +64,11 @@ class OCRStrategyList(Resource):
         if not user.has_role('admin'):
             return {'message': 'Admin access required', 'status': 'error'}, 403
 
-        # NOTE: OCR functionality has been disabled. Returning hardcoded strategies.
-        # Original OCR/Celery code is backed up in old_code/ocr_old.py
+        strategies = OCRStrategy.query.all()
 
         return {
             'status': 'success',
-            'strategies': [
-                {
-                    'id': 1,
-                    'strategy_name': 'general_text',
-                    'ocr_method': 'simulated',
-                    'language_hints': ['en', 'ar'],
-                    'description': 'General text OCR strategy (simulated)',
-                    'is_active': True,
-                    'created_at': '2025-01-01T00:00:00.000000'
-                }
-            ]
+            'strategies': [s.to_dict() for s in strategies]
         }, 200
 
     @jwt_required()
@@ -105,21 +91,25 @@ class OCRStrategyList(Resource):
 
         data = ocr_ns.payload
 
-        # NOTE: OCR functionality has been disabled. Returning hardcoded success response.
-        # Original OCR/Celery code is backed up in old_code/ocr_old.py
+        try:
+            strategy = OCRStrategy(
+                strategy_name=data.get('strategy_name'),
+                ocr_method=data.get('ocr_method'),
+                language_hints=data.get('language_hints'),
+                description=data.get('description'),
+                is_active=data.get('is_active', True)
+            )
+            db.session.add(strategy)
+            db.session.commit()
 
-        return {
-            'status': 'success',
-            'strategy': {
-                'id': 999,
-                'strategy_name': data.get('strategy_name', 'simulated_strategy'),
-                'ocr_method': data.get('ocr_method', 'simulated'),
-                'language_hints': data.get('language_hints', ['en']),
-                'description': data.get('description', 'Simulated OCR strategy'),
-                'is_active': data.get('is_active', True),
-                'created_at': datetime.utcnow().isoformat()
-            }
-        }, 201
+            return {
+                'status': 'success',
+                'strategy': strategy.to_dict()
+            }, 201
+
+        except Exception as e:
+            db.session.rollback()
+            return {'message': f'Failed to create strategy: {str(e)}', 'status': 'error'}, 500
 
 
 @ocr_ns.route('/jobs')
@@ -141,27 +131,15 @@ class OCRJobList(Resource):
         if not user.has_role('admin'):
             return {'message': 'Admin access required', 'status': 'error'}, 403
 
-        # NOTE: OCR functionality has been disabled. Returning hardcoded jobs.
-        # Original OCR/Celery code is backed up in old_code/ocr_old.py
+        # Get recent jobs (last 100)
+        jobs = OCRProcessingJob.query.order_by(
+            OCRProcessingJob.created_at.desc()
+        ).limit(100).all()
 
         return {
             'status': 'success',
-            'jobs': [
-                {
-                    'id': 1,
-                    'submission_id': 1,
-                    'celery_task_id': 'hardcoded-task-1',
-                    'job_status': 'completed',
-                    'retry_count': 0,
-                    'max_retries': 3,
-                    'error_details': None,
-                    'started_at': '2025-01-01T00:00:00.000000',
-                    'completed_at': '2025-01-01T00:01:00.000000',
-                    'created_at': '2025-01-01T00:00:00.000000',
-                    'updated_at': '2025-01-01T00:01:00.000000'
-                }
-            ],
-            'total': 1
+            'jobs': [job.to_dict() for job in jobs],
+            'total': len(jobs)
         }, 200
 
 
@@ -186,24 +164,22 @@ class OCRJobDetail(Resource):
         if not user.has_role('admin'):
             return {'message': 'Admin access required', 'status': 'error'}, 403
 
-        # NOTE: OCR functionality has been disabled. Returning hardcoded job details.
-        # Original OCR/Celery code is backed up in old_code/ocr_old.py
+        job = OCRProcessingJob.query.get_or_404(job_id)
+
+        # Check Celery task status if job is processing
+        if job.job_status in ['queued', 'processing']:
+            from app import celery
+            try:
+                task = celery.AsyncResult(job.celery_task_id)
+                if task.state:
+                    job.job_status = task.state.lower()
+                    db.session.commit()
+            except Exception:
+                pass
 
         return {
             'status': 'success',
-            'job': {
-                'id': job_id,
-                'submission_id': 1,
-                'celery_task_id': 'hardcoded-task-' + str(job_id),
-                'job_status': 'completed',
-                'retry_count': 0,
-                'max_retries': 3,
-                'error_details': None,
-                'started_at': '2025-01-01T00:00:00.000000',
-                'completed_at': '2025-01-01T00:01:00.000000',
-                'created_at': '2025-01-01T00:00:00.000000',
-                'updated_at': '2025-01-01T00:01:00.000000'
-            }
+            'job': job.to_dict()
         }, 200
 
 
@@ -226,17 +202,21 @@ class OCRStats(Resource):
         if not user.has_role('admin'):
             return {'message': 'Admin access required', 'status': 'error'}, 403
 
-        # NOTE: OCR functionality has been disabled. Returning hardcoded statistics.
-        # Original OCR/Celery code is backed up in old_code/ocr_old.py
+        # Calculate statistics
+        total_jobs = OCRProcessingJob.query.count()
+        completed_jobs = OCRProcessingJob.query.filter_by(job_status='completed').count()
+        failed_jobs = OCRProcessingJob.query.filter_by(job_status='failed').count()
+        queued_jobs = OCRProcessingJob.query.filter_by(job_status='queued').count()
+        processing_jobs = OCRProcessingJob.query.filter_by(job_status='processing').count()
 
         return {
             'status': 'success',
             'stats': {
-                'total_jobs': 0,
-                'completed': 0,
-                'failed': 0,
-                'queued': 0,
-                'processing': 0,
-                'success_rate': 0
+                'total_jobs': total_jobs,
+                'completed': completed_jobs,
+                'failed': failed_jobs,
+                'queued': queued_jobs,
+                'processing': processing_jobs,
+                'success_rate': (completed_jobs / total_jobs * 100) if total_jobs > 0 else 0
             }
         }, 200

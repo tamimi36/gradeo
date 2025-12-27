@@ -16,9 +16,14 @@ jwt = JWTManager()
 cors = CORS()
 mail = Mail()
 
+# Celery instance (will be initialized in create_app)
+celery = None
+
 
 def create_app(config_class=Config):
     """Application factory pattern"""
+    global celery
+
     app = Flask(__name__, static_folder='static')
     app.config.from_object(config_class)
 
@@ -28,6 +33,14 @@ def create_app(config_class=Config):
     jwt.init_app(app)
     cors.init_app(app)
     mail.init_app(app)
+
+    # Initialize Celery
+    from app.services.tasks.celery_config import make_celery
+    celery = make_celery(app)
+
+    # Set celery instance for tasks
+    from app.services.tasks import ocr_tasks
+    ocr_tasks.set_celery(celery)
 
     # Register API blueprint (includes all namespaces)
     from app.api import api_bp

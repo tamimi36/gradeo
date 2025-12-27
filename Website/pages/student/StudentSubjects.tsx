@@ -9,7 +9,8 @@ import {
     Clock,
     TrendingUp,
     TrendingDown,
-    ArrowRight
+    ArrowRight,
+    Globe
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
@@ -26,6 +27,9 @@ const StudentSubjects: React.FC = () => {
         { id: 'bio', name: 'Biology', score: 88, trend: '-2%', trendUp: false, color: 'orange', icon: Dna },
         { id: 'eng', name: 'English', score: 75, trend: '+3%', trendUp: true, color: 'pink', icon: BookOpen },
         { id: 'hist', name: 'History', score: 81, trend: '+3%', trendUp: true, color: 'indigo', icon: Clock },
+        { id: 'geo', name: 'Geography', score: 84, trend: '+5%', trendUp: true, color: 'teal', icon: Globe },
+        { id: 'cs', name: 'Comp Science', score: 95, trend: '+8%', trendUp: true, color: 'cyan', icon: Calculator },
+        { id: 'art', name: 'Art History', score: 90, trend: '+1%', trendUp: true, color: 'rose', icon: BookOpen },
     ];
 
     return (
@@ -45,77 +49,41 @@ const StudentSubjects: React.FC = () => {
                 {subjects.map((subject, index) => (
                     <motion.div
                         key={subject.id}
-                        initial={{ opacity: 0, y: 20 }}
-                        animate={{ opacity: 1, y: 0 }}
+                        initial={{ opacity: 0, scale: 0.95 }}
+                        animate={{ opacity: 1, scale: 1 }}
                         transition={{ delay: index * 0.05, ...transitionEase }}
-                        whileHover={{
-                            boxShadow: "0 25px 50px -12px rgba(0, 0, 0, 0.15)",
-                        }}
+                        whileHover={{ y: -4 }}
                         whileTap={{ scale: 0.98 }}
                         onClick={() => navigate(`/student/subject/${subject.id}`)}
-                        className="group bg-white dark:bg-zinc-900 rounded-[1.5rem] p-8 border border-zinc-200/50 dark:border-zinc-800 shadow-sm transition-all duration-150 ease-[0.16,1,0.3,1] cursor-pointer relative overflow-hidden"
+                        className="group bg-white dark:bg-zinc-900 rounded-2xl p-6 border border-zinc-200 dark:border-zinc-800 hover:border-zinc-300 dark:hover:border-zinc-700 hover:shadow-lg hover:shadow-zinc-900/5 transition-all duration-300 cursor-pointer relative overflow-hidden"
                     >
-                        {/* Hover Gradient Overlay */}
-                        <div className={`absolute inset-0 bg-gradient-to-br from-${subject.color}-500/0 to-${subject.color}-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500`} />
-
-                        <div className="relative z-10 flex flex-col items-center">
-                            {/* Icon Box */}
-                            <div className={`w-20 h-20 rounded-3xl bg-${subject.color}-500/10 text-${subject.color}-600 dark:text-${subject.color}-400 flex items-center justify-center mb-6 shadow-sm group-hover:scale-110 transition-transform duration-300 border border-${subject.color}-100 dark:border-${subject.color}-900/20`}>
-                                <subject.icon size={36} strokeWidth={1.5} />
+                        <div className="flex items-start justify-between mb-8">
+                            <div className={`w-12 h-12 rounded-xl bg-zinc-50 dark:bg-zinc-800 border border-zinc-100 dark:border-zinc-700 flex items-center justify-center text-zinc-900 dark:text-white group-hover:bg-${subject.color}-50 dark:group-hover:bg-${subject.color}-900/20 group-hover:text-${subject.color}-600 transition-colors duration-300`}>
+                                <subject.icon size={22} strokeWidth={1.5} />
                             </div>
-
-                            {/* Circular Progress */}
-                            <div className="relative w-40 h-40 mb-6">
-                                <svg className="w-full h-full transform -rotate-90 drop-shadow-sm">
-                                    <circle
-                                        cx="80" cy="80" r="70"
-                                        stroke="currentColor"
-                                        fill="transparent"
-                                        strokeWidth="8"
-                                        className="text-zinc-100 dark:text-zinc-800"
-                                    />
-                                    <motion.circle
-                                        initial={{ pathLength: 0 }}
-                                        animate={{ pathLength: subject.score / 100 }}
-                                        transition={{ duration: 1.5, ease: "easeOut", delay: 0.2 + (index * 0.1) }}
-                                        cx="80" cy="80" r="70"
-                                        stroke="currentColor"
-                                        fill="transparent"
-                                        strokeWidth="8"
-                                        className={`text-${subject.color}-500`}
-                                        strokeLinecap="round"
-                                    />
-                                </svg>
-                                <div className="absolute inset-0 flex flex-col items-center justify-center">
-                                    <motion.span
-                                        initial={{ opacity: 0 }}
-                                        animate={{ opacity: 1 }}
-                                        transition={{ delay: 0.5 + (index * 0.1) }}
-                                        className="text-5xl font-black text-zinc-900 dark:text-white tracking-tighter"
-                                    >
-                                        {subject.score}%
-                                    </motion.span>
-                                    <span className="text-xs font-bold text-zinc-400 uppercase tracking-widest mt-1">Average</span>
+                            <div className="flex flex-col items-end">
+                                <span className="text-3xl font-bold text-zinc-900 dark:text-white tracking-tight">{subject.score}%</span>
+                                <div className="flex items-center gap-1 text-xs font-medium mt-0.5">
+                                    <span className={subject.trendUp ? 'text-emerald-600' : 'text-red-500'}>{subject.trend}</span>
+                                    <span className="text-zinc-400">vs last term</span>
                                 </div>
                             </div>
+                        </div>
 
-                            {/* Text Info */}
-                            <div className="text-center w-full">
-                                <h3 className="text-2xl font-bold text-zinc-900 dark:text-white mb-3 tracking-tight group-hover:text-blue-600 transition-colors">
-                                    {subject.name}
-                                </h3>
-                                <div className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold uppercase tracking-wide bg-zinc-50 dark:bg-zinc-800 text-zinc-600 dark:text-zinc-400 border border-zinc-100 dark:border-zinc-700`}>
-                                    {subject.trendUp ? <TrendingUp size={14} className="text-emerald-500" /> : <TrendingDown size={14} className="text-red-500" />}
-                                    <span className={subject.trendUp ? 'text-emerald-600 dark:text-emerald-400' : 'text-red-600 dark:text-red-400'}>{subject.trend}</span>
-                                </div>
+                        <div>
+                            <h3 className="text-lg font-semibold text-zinc-900 dark:text-white mb-1 group-hover:text-blue-600 transition-colors">{subject.name}</h3>
+                            <div className="w-full bg-zinc-100 dark:bg-zinc-800 h-1.5 rounded-full overflow-hidden mt-4">
+                                <motion.div
+                                    initial={{ width: 0 }}
+                                    animate={{ width: `${subject.score}%` }}
+                                    transition={{ duration: 1, delay: 0.2 }}
+                                    className={`h-full rounded-full bg-${subject.color}-500`}
+                                />
                             </div>
+                        </div>
 
-                            {/* Hover CTA */}
-                            <div className="absolute bottom-6 right-6 opacity-0 group-hover:opacity-100 transition-all duration-300 translate-y-2 group-hover:translate-y-0">
-                                <div className="w-10 h-10 rounded-full bg-zinc-900 dark:bg-white text-white dark:text-black flex items-center justify-center shadow-lg hover:scale-110 transition-transform">
-                                    <ArrowRight size={20} />
-                                </div>
-                            </div>
+                        <div className="absolute bottom-6 right-6 opacity-0 group-hover:opacity-100 transition-all duration-300 transform translate-x-4 group-hover:translate-x-0">
+                            <ArrowRight size={20} className="text-zinc-400 group-hover:text-zinc-900 dark:group-hover:text-white" />
                         </div>
                     </motion.div>
                 ))}

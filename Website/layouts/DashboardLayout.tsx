@@ -161,10 +161,10 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ role }) => {
                             <input
                                 type="text"
                                 placeholder="Search..."
-                                className="pl-11 pr-4 py-2.5 rounded-2xl bg-white dark:bg-zinc-900 border border-zinc-200/50 dark:border-zinc-800 text-sm focus:outline-none focus:ring-4 focus:ring-zinc-100 dark:focus:ring-zinc-800 w-64 transition-all shadow-sm group-hover:shadow-[0_4px_12px_-2px_rgba(0,0,0,0.05)] placeholder:text-zinc-400 font-medium"
+                                className="pl-11 pr-4 py-2.5 rounded-2xl bg-white dark:bg-zinc-900 border border-zinc-200/50 dark:border-zinc-800 text-sm focus:outline-none focus:ring-4 focus:ring-zinc-100 dark:focus:ring-zinc-800 w-64 transition-shadow duration-200 shadow-sm group-hover:shadow-[0_4px_12px_-2px_rgba(0,0,0,0.05)] placeholder:text-zinc-400 font-medium"
                             />
                         </div>
-                        <button className="p-2.5 rounded-full bg-white dark:bg-zinc-900 border border-zinc-200/50 dark:border-zinc-800 text-zinc-500 hover:text-zinc-900 dark:hover:text-white hover:shadow-md transition-all relative active:scale-95 duration-200">
+                        <button className="p-2.5 rounded-full bg-white dark:bg-zinc-900 border border-zinc-200/50 dark:border-zinc-800 text-zinc-500 hover:text-zinc-900 dark:hover:text-white hover:shadow-md transition-colors duration-200 relative active:scale-95">
                             <Bell size={20} strokeWidth={2} />
                             <span className="absolute top-2.5 right-3 w-2 h-2 bg-red-500 rounded-full border-2 border-white dark:border-zinc-900 shadow-sm"></span>
                         </button>

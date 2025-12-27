@@ -49,7 +49,7 @@ const StudentProgress: React.FC = () => {
                             boxShadow: "0 20px 40px -15px rgba(0, 0, 0, 0.1)",
                         }}
                         whileTap={{ scale: 0.98 }}
-                        className="bg-white dark:bg-zinc-900 p-6 rounded-[1.5rem] border border-zinc-200/50 dark:border-zinc-800 shadow-sm transition-all duration-150 ease-[0.16,1,0.3,1] flex flex-col items-center text-center gap-6 group cursor-default"
+                        className="bg-white dark:bg-zinc-900 p-6 rounded-2xl border border-zinc-200/50 dark:border-zinc-800 shadow-sm transition-all duration-150 ease-[0.16,1,0.3,1] flex flex-col items-center text-center gap-6 group cursor-default"
                     >
                         {/* Icon */}
                         <div className={`w-14 h-14 rounded-2xl bg-${subject.color}-500/10 text-${subject.color}-600 dark:text-${subject.color}-400 flex items-center justify-center transition-transform duration-300 group-hover:scale-110 shadow-sm border border-${subject.color}-100 dark:border-${subject.color}-900/20`}>
@@ -108,7 +108,7 @@ const StudentProgress: React.FC = () => {
                     initial={{ opacity: 0, x: -20 }}
                     animate={{ opacity: 1, x: 0 }}
                     transition={{ delay: 0.2, ...transitionEase }}
-                    className="bg-zinc-900 dark:bg-zinc-100 rounded-[1.5rem] p-10 text-white dark:text-black relative overflow-hidden shadow-2xl shadow-zinc-900/20 dark:shadow-none bg-gradient-to-br from-black to-zinc-900 dark:from-white dark:to-zinc-100"
+                    className="bg-zinc-900 dark:bg-zinc-100 rounded-2xl p-10 text-white dark:text-black relative overflow-hidden shadow-2xl shadow-zinc-900/20 dark:shadow-none bg-gradient-to-br from-black to-zinc-900 dark:from-white dark:to-zinc-100"
                 >
                     <div className="absolute -right-10 -bottom-10 opacity-10">
                         <TrendingUp size={240} />
@@ -143,7 +143,7 @@ const StudentProgress: React.FC = () => {
                     initial={{ opacity: 0, x: 20 }}
                     animate={{ opacity: 1, x: 0 }}
                     transition={{ delay: 0.2, ...transitionEase }}
-                    className="bg-white dark:bg-zinc-900 rounded-[1.5rem] border border-zinc-200/50 dark:border-zinc-800 p-10 shadow-sm"
+                    className="bg-white dark:bg-zinc-900 rounded-2xl border border-zinc-200/50 dark:border-zinc-800 p-10 shadow-sm"
                 >
                     <h3 className="text-2xl font-black text-zinc-900 dark:text-white tracking-tight mb-8">Achievement Progress</h3>
                     <div className="space-y-8">

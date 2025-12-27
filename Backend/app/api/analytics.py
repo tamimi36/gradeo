@@ -328,6 +328,8 @@ class CohortComparison(Resource):
         cohorts_data.sort(key=lambda x: x['average_score'], reverse=True)
 
         return {
+            'status': 'success',
+            'message': f'Successfully compared {len(cohorts_data)} cohorts',
             'cohort_count': len(cohorts_data),
             'comparisons': cohorts_data,
             'best_performing': cohorts_data[0] if cohorts_data else None,
@@ -408,6 +410,8 @@ class StudentProgressTimeline(Resource):
         weaknesses = [p.topic_name for p in progress_records if p.is_weakness]
 
         return {
+            'status': 'success',
+            'message': f'Successfully retrieved progress timeline for student {student_id}',
             'student_id': student_id,
             'student_name': f"{student.first_name} {student.last_name}",
             'timeline': timeline,

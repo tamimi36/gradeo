@@ -66,7 +66,8 @@ class User(db.Model):
     def set_password(self, password):
         """Hash and set password"""
         if password:
-            self.password_hash = generate_password_hash(password)
+            # Use pbkdf2:sha256 for compatibility (scrypt requires OpenSSL 1.1+)
+            self.password_hash = generate_password_hash(password, method='pbkdf2:sha256')
 
     def check_password(self, password):
         """Check if password matches"""
@@ -85,6 +86,17 @@ class User(db.Model):
     def get_roles(self):
         """Get list of role names"""
         return [user_role.role.name for user_role in self.roles]
+
+    def get_role(self):
+        """Return the primary role name for this user.
+
+        This is a convenience helper used by some analytics/AI endpoints
+        which expect a single role string (e.g. 'teacher', 'admin', 'student').
+        If the user has multiple roles, the first one is returned.
+        If the user has no roles, 'student' is returned by default.
+        """
+        roles = self.get_roles()
+        return roles[0] if roles else 'student'
 
     def __repr__(self):
         return f'<User {self.username}>'

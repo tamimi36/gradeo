@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion } from 'framer-motion';
 import {
     User,
     Bell,
@@ -7,16 +7,13 @@ import {
     Moon,
     LogOut,
     ChevronRight,
-    Smartphone,
-    Mail,
-    Lock,
     Globe,
-    HelpCircle
+    HelpCircle,
+    Mail,
+    Lock
 } from 'lucide-react';
 
 const StudentSettings: React.FC = () => {
-    const [activeTab, setActiveTab] = useState('General');
-
     // Apple Motion Constants
     const transitionEase = { duration: 0.3, ease: [0.16, 1, 0.3, 1] };
 
@@ -24,72 +21,93 @@ const StudentSettings: React.FC = () => {
         {
             title: 'Account',
             items: [
-                { icon: User, label: 'Profile Information', value: 'Ahmed Ali', color: 'bg-blue-500' },
-                { icon: Mail, label: 'Email Address', value: 'ahmed@gradeo.com', color: 'bg-blue-500' },
-                { icon: Lock, label: 'Password & Security', value: '', color: 'bg-blue-500' },
+                { icon: User, label: 'Profile Information', value: 'Ahmed Ali' },
+                { icon: Mail, label: 'Email Address', value: 'ahmed@gradeo.com' },
+                { icon: Lock, label: 'Password & Security', value: 'Last changed 30d ago' },
             ]
         },
         {
             title: 'Preferences',
             items: [
-                { icon: Bell, label: 'Notifications', value: 'On', color: 'bg-red-500' },
-                { icon: Moon, label: 'Appearance', value: 'Auto', color: 'bg-indigo-500' },
-                { icon: Globe, label: 'Language', value: 'English (US)', color: 'bg-blue-500' },
+                { icon: Bell, label: 'Notifications', value: 'On', type: 'toggle', active: true },
+                { icon: Moon, label: 'Appearance', value: 'Auto', type: 'select' },
+                { icon: Globe, label: 'Language', value: 'English (US)', type: 'select' },
             ]
         },
         {
             title: 'Support',
             items: [
-                { icon: HelpCircle, label: 'Help & Support', value: '', color: 'bg-zinc-500' },
-                { icon: Shield, label: 'Privacy Policy', value: '', color: 'bg-indigo-500' },
+                { icon: HelpCircle, label: 'Help & Support', value: '' },
+                { icon: Shield, label: 'Privacy Policy', value: '' },
             ]
         }
     ];
 
+    const Toggle = ({ active }: { active: boolean }) => (
+        <div className={`w-[50px] h-[30px] rounded-full p-[2px] cursor-pointer transition-colors duration-200 ${active ? 'bg-zinc-900 dark:bg-white' : 'bg-zinc-200 dark:bg-zinc-700'}`}>
+            <motion.div
+                className={`w-[26px] h-[26px] bg-white dark:bg-zinc-900 rounded-full shadow-sm`}
+                animate={{ x: active ? 20 : 0 }}
+                transition={{ type: "tween", duration: 0.18, ease: "easeInOut" }}
+            />
+        </div>
+    );
+
     return (
-        <div className="max-w-4xl mx-auto pb-10">
+        <div className="max-w-2xl mx-auto pb-12 pt-4">
             {/* Header */}
             <motion.div
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={transitionEase}
-                className="mb-10 text-center"
+                className="mb-14"
             >
-                <div className="w-24 h-24 bg-zinc-100 dark:bg-zinc-800 rounded-full mx-auto mb-4 flex items-center justify-center text-3xl font-bold text-zinc-400">
-                    AA
+                <h3 className="text-sm font-semibold text-zinc-500 uppercase tracking-widest mb-3 px-1">Profile</h3>
+                <div className="bg-white dark:bg-zinc-900 rounded-xl border border-zinc-200 dark:border-zinc-800 p-4 flex items-center gap-4 shadow-sm">
+                    <div className="w-14 h-14 bg-zinc-100 dark:bg-zinc-800 rounded-full flex items-center justify-center text-lg font-bold text-zinc-400">
+                        AA
+                    </div>
+                    <div>
+                        <h1 className="text-lg font-bold text-zinc-900 dark:text-white tracking-tight">Ahmed Ali</h1>
+                        <p className="text-zinc-500 font-medium text-xs">ahmed@gradeo.com</p>
+                    </div>
                 </div>
-                <h1 className="text-3xl font-bold text-zinc-900 dark:text-white tracking-tight">Ahmed Ali</h1>
-                <p className="text-zinc-500 font-medium">ahmed@gradeo.com</p>
             </motion.div>
 
             <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
                 transition={{ delay: 0.1, ...transitionEase }}
-                className="space-y-8"
+                className="space-y-14"
             >
                 {menuSections.map((section, idx) => (
                     <div key={idx}>
-                        <h3 className="text-xs font-bold text-zinc-400 uppercase tracking-widest mb-3 ml-4">{section.title}</h3>
-                        <div className="bg-white dark:bg-zinc-900 rounded-[1.5rem] border border-zinc-200/60 dark:border-zinc-800 overflow-hidden shadow-sm">
+                        <h3 className="text-sm font-semibold text-zinc-500 uppercase tracking-widest mb-3 px-1">{section.title}</h3>
+                        <div className="bg-white dark:bg-zinc-900 rounded-xl border border-zinc-200 dark:border-zinc-800 overflow-hidden shadow-sm">
                             {section.items.map((item, i) => (
                                 <motion.div
                                     key={i}
-                                    whileHover={{ backgroundColor: "rgba(244, 244, 245, 0.5)" }}
+                                    whileHover={{ backgroundColor: "rgba(0,0,0,0.02)" }}
                                     className={`
-                                        flex items-center justify-between p-4 cursor-pointer group transition-colors
+                                        flex items-center justify-between p-4 cursor-pointer transition-colors
                                         ${i !== section.items.length - 1 ? 'border-b border-zinc-100 dark:border-zinc-800' : ''}
                                     `}
                                 >
                                     <div className="flex items-center gap-4">
-                                        <div className={`w-8 h-8 rounded-lg ${item.color} flex items-center justify-center text-white shadow-sm`}>
-                                            <item.icon size={16} strokeWidth={2.5} />
+                                        <div className="text-zinc-500 dark:text-zinc-400">
+                                            <item.icon size={20} strokeWidth={1.5} />
                                         </div>
-                                        <span className="font-semibold text-zinc-900 dark:text-white text-[15px]">{item.label}</span>
+                                        <span className="font-medium text-zinc-900 dark:text-white text-[15px]">{item.label}</span>
                                     </div>
-                                    <div className="flex items-center gap-2">
-                                        <span className="text-zinc-400 dark:text-zinc-500 text-[15px]">{item.value}</span>
-                                        <ChevronRight size={18} className="text-zinc-300 dark:text-zinc-600" />
+                                    <div className="flex items-center gap-4">
+                                        {item.type === 'toggle' ? (
+                                            <Toggle active={!!item.active} />
+                                        ) : (
+                                            <>
+                                                <span className="text-zinc-500 dark:text-zinc-500 text-[15px]">{item.value}</span>
+                                                <ChevronRight size={18} className="text-zinc-300 dark:text-zinc-600" strokeWidth={2} />
+                                            </>
+                                        )}
                                     </div>
                                 </motion.div>
                             ))}
@@ -97,19 +115,17 @@ const StudentSettings: React.FC = () => {
                     </div>
                 ))}
 
-                <motion.button
-                    whileHover={{ scale: 1.02 }}
-                    whileTap={{ scale: 0.98 }}
-                    className="w-full bg-white dark:bg-zinc-900 p-4 rounded-[1.5rem] border border-zinc-200/60 dark:border-zinc-800 shadow-sm flex items-center justify-center gap-2 text-red-500 font-bold text-[15px] hover:bg-red-50 dark:hover:bg-red-900/10 hover:border-red-100 dark:hover:border-red-900/30 transition-all"
-                >
-                    <LogOut size={18} />
-                    Sign Out
-                </motion.button>
+                <div className="pt-6 px-4">
+                    <button
+                        className="w-full py-3.5 rounded-xl border border-zinc-200 dark:border-zinc-800 text-red-600 font-medium text-[15px] hover:bg-red-50 dark:hover:bg-red-900/10 transition-colors flex items-center justify-center gap-2"
+                    >
+                        Sign Out
+                    </button>
+                    <p className="text-center text-xs text-zinc-300 font-medium mt-6">
+                        Gradeo v4.0.1
+                    </p>
+                </div>
             </motion.div>
-
-            <p className="text-center text-xs text-zinc-400 font-medium mt-10">
-                Gradeo Student v4.0.1 (Build 2024.12.26)
-            </p>
         </div>
     );
 };

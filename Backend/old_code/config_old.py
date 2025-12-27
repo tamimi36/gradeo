@@ -21,10 +21,25 @@ class Config:
     MAX_CONTENT_LENGTH = 16 * 1024 * 1024  # 16MB max file size
     UPLOAD_FOLDER = os.environ.get('UPLOAD_FOLDER') or 'uploads'
     ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'pdf'}
+    
+    # Google Cloud Vision OCR Configuration
+    GOOGLE_VISION_API_KEY = os.environ.get('GOOGLE_VISION_API_KEY')
+    GOOGLE_VISION_API_QUOTA_PER_MINUTE = int(os.environ.get('GOOGLE_VISION_API_QUOTA_PER_MINUTE', 60))
+
+    # Celery Configuration
+    CELERY_BROKER_URL = os.environ.get('CELERY_BROKER_URL', 'redis://localhost:6379/0')
+    CELERY_RESULT_BACKEND = os.environ.get('CELERY_RESULT_BACKEND', 'redis://localhost:6379/0')
+
+    # OCR Processing Configuration
+    OCR_CONFIDENCE_THRESHOLD = float(os.environ.get('OCR_CONFIDENCE_THRESHOLD', 0.7))
+    OCR_MAX_RETRIES = int(os.environ.get('OCR_MAX_RETRIES', 3))
+    OCR_RETRY_DELAY_SECONDS = int(os.environ.get('OCR_RETRY_DELAY_SECONDS', 60))
 
     # Grading Configuration
+    GRADING_OCR_CONFIDENCE_THRESHOLD = float(os.environ.get('GRADING_OCR_CONFIDENCE_THRESHOLD', 0.70))
     GRADING_CONFIDENCE_LOW_THRESHOLD = float(os.environ.get('GRADING_CONFIDENCE_LOW_THRESHOLD', 0.40))
     GRADING_CONFIDENCE_MID_THRESHOLD = float(os.environ.get('GRADING_CONFIDENCE_MID_THRESHOLD', 0.70))
+    AUTO_GRADE_ON_OCR_COMPLETE = os.environ.get('AUTO_GRADE_ON_OCR_COMPLETE', 'True').lower() in ['true', '1', 't']
 
     # Google OAuth Configuration
     GOOGLE_CLIENT_ID = os.environ.get('GOOGLE_CLIENT_ID') or None

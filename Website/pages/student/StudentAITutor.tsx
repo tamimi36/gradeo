@@ -1,16 +1,12 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
-    Send,
     Sparkles,
     ArrowLeft,
-    MoreHorizontal,
     Plus,
-    Bot,
     User,
     StopCircle,
     BookOpen,
-    Calculator,
     Zap,
     FlaskConical,
     Dna,
@@ -18,7 +14,7 @@ import {
     FileText,
     BrainCircuit,
     ChevronRight,
-    Search
+    Calculator
 } from 'lucide-react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 
@@ -42,7 +38,6 @@ const StudentAITutor: React.FC = () => {
     ]);
 
     // APPLE MOTION CONSTANTS
-    const transitionSpring = { type: "spring", stiffness: 300, damping: 30 };
     const transitionEase = { duration: 0.35, ease: [0.16, 1, 0.3, 1] }; // Apple ease-out
 
     const subjects = [
@@ -55,9 +50,9 @@ const StudentAITutor: React.FC = () => {
     ];
 
     const contextOptions = [
-        { id: 'general', title: 'General Study', desc: 'Ask questions about concepts, theories, or homework.', icon: Sparkles, color: 'blue' },
-        { id: 'exam', title: 'Exam Prep', desc: 'Practice with past papers and mock quizzes.', icon: FileText, color: 'orange' },
-        { id: 'quiz', title: 'Quick Quiz', desc: 'Test your knowledge with a generated 5-min quiz.', icon: BrainCircuit, color: 'purple' },
+        { id: 'general', title: 'General Study', desc: 'Ask questions about concepts.', icon: Sparkles },
+        { id: 'exam', title: 'Exam Prep', desc: 'Practice with past papers.', icon: FileText },
+        { id: 'quiz', title: 'Quick Quiz', desc: 'Test your knowledge.', icon: BrainCircuit },
     ];
 
     // Initialize based on URL param
@@ -89,12 +84,11 @@ const StudentAITutor: React.FC = () => {
     const handleContextSelect = (context: any) => {
         setSelectedContext(context);
         setStep('chat');
-        // Reset chat with context
         setMessages([
             {
                 id: Date.now(),
                 sender: 'ai',
-                text: `Great choice! I'm ready to help you with ${selectedSubject.name} (${context.title}). How would you like to start?`
+                text: `I'm ready to help you with ${selectedSubject.name}. \n\nWe are in ${context.title} mode. How would you like to start?`
             }
         ]);
     };
@@ -106,15 +100,14 @@ const StudentAITutor: React.FC = () => {
         setInputValue('');
         setIsTyping(true);
 
-        // Mock AI response with typing delay
         setTimeout(() => {
             setIsTyping(false);
             setMessages(prev => [...prev, {
                 id: Date.now() + 1,
                 sender: 'ai',
-                text: "I can certainly help with that. Let's start by reviewing the core concepts. Would you like a brief summary or shall we jump straight into practice problems?"
+                text: "Here is a breakdown of that concept.\n\nFirst, consider the fundamental principles. Unlike classical mechanics, quantum mechanics operates on probabilities. \n\nWould you like me to elaborate on the wave function?"
             }]);
-        }, 1500);
+        }, 1200);
     };
 
     const handleBack = () => {
@@ -125,239 +118,227 @@ const StudentAITutor: React.FC = () => {
 
     // --- VIEWS ---
 
-    const SubjectSelectionView = () => (
+    // --- VIEWS (Inlined to prevent focus loss bugs) ---
+
+    const renderSubjectSelection = () => (
         <motion.div
-            initial={{ opacity: 0, y: 20 }}
+            key="subject"
+            initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, scale: 0.95 }}
+            exit={{ opacity: 0 }}
             transition={transitionEase}
-            className="max-w-4xl mx-auto w-full pt-12 pb-20 px-6"
+            className="max-w-4xl mx-auto w-full pt-16 px-6"
         >
-            <div className="text-center mb-12">
-                <div className="w-16 h-16 bg-white dark:bg-zinc-800 rounded-3xl flex items-center justify-center mx-auto mb-6 shadow-xl shadow-zinc-200/50 dark:shadow-none border border-zinc-100 dark:border-zinc-700">
-                    <Sparkles size={32} className="text-zinc-900 dark:text-white" />
-                </div>
-                <h1 className="text-4xl font-black text-zinc-900 dark:text-white tracking-tight mb-3">Choose a Subject</h1>
-                <p className="text-lg text-zinc-500 font-medium">What would you like to master today?</p>
+            <div className="mb-12">
+                <h1 className="text-3xl font-semibold text-zinc-900 dark:text-white tracking-editorial mb-2">Choose a Subject</h1>
+                <p className="text-lg text-zinc-500 font-normal">Select a topic to begin your session.</p>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                 {subjects.map((subject, i) => (
-                    <motion.button
+                    <button
                         key={subject.id}
-                        initial={{ opacity: 0, y: 20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ ...transitionEase, delay: i * 0.05 }}
-                        whileHover={{
-                            boxShadow: "0 20px 40px -15px rgba(0, 0, 0, 0.1)",
-                        }}
-                        whileTap={{ scale: 0.98 }}
                         onClick={() => handleSubjectSelect(subject)}
-                        className="bg-white dark:bg-zinc-900 p-6 rounded-[1.5rem] border border-zinc-200/60 dark:border-zinc-800 shadow-sm text-left group relative overflow-hidden transition-all duration-150 ease-[0.16,1,0.3,1]"
+                        className={`group relative bg-white dark:bg-zinc-800/50 p-6 rounded-2xl border border-zinc-200 dark:border-zinc-800 hover:border-${subject.color}-200 dark:hover:border-${subject.color}-900 hover:shadow-sm transition-all duration-200 text-left overflow-hidden`}
                     >
-                        {/* Hover Gradient Overlay */}
-                        <div className={`absolute inset-0 bg-gradient-to-br from-${subject.color}-500/0 to-${subject.color}-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500`} />
+                        <div className={`absolute left-0 top-0 bottom-0 w-1 bg-${subject.color}-500/0 group-hover:bg-${subject.color}-500 transition-all duration-300`} />
+                        <div className={`w-10 h-10 rounded-lg bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 flex items-center justify-center text-zinc-900 dark:text-white mb-4 group-hover:scale-110 transition-transform duration-300`}>
+                            <subject.icon size={20} strokeWidth={1.5} className={`group-hover:text-${subject.color}-600 transition-colors`} />
+                        </div>
+                        <h3 className="text-lg font-semibold text-zinc-900 dark:text-white mb-1 group-hover:translate-x-1 transition-transform">{subject.name}</h3>
+                        <p className="text-sm text-zinc-500 group-hover:translate-x-1 transition-transform">{subject.topics.length} topics</p>
 
-                        <div className="flex items-start justify-between mb-8 relative z-10">
-                            <div className={`w-14 h-14 rounded-2xl bg-${subject.color}-50 dark:bg-${subject.color}-900/10 flex items-center justify-center text-${subject.color}-600 dark:text-${subject.color}-400 group-hover:scale-110 transition-transform duration-300`}>
-                                <subject.icon size={28} strokeWidth={1.5} />
-                            </div>
-                            <div className="w-8 h-8 rounded-full bg-zinc-50 dark:bg-zinc-800 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all -translate-x-2 group-hover:translate-x-0">
-                                <ChevronRight size={16} className="text-zinc-600 dark:text-zinc-300" />
-                            </div>
+                        <div className="absolute top-6 right-6 opacity-0 group-hover:opacity-100 transition-all -translate-x-2 group-hover:translate-x-0">
+                            <ChevronRight size={20} className="text-zinc-400" />
                         </div>
-                        <div className="relative z-10">
-                            <h3 className="text-xl font-bold text-zinc-900 dark:text-white mb-1">{subject.name}</h3>
-                            <p className="text-sm text-zinc-500 font-medium">{subject.topics.length} topics available</p>
-                        </div>
-                    </motion.button>
+                    </button>
                 ))}
             </div>
         </motion.div>
     );
 
-    const ContextSelectionView = () => (
+    const renderContextSelection = () => (
         <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, scale: 0.95 }}
-            transition={transitionEase}
-            className="max-w-3xl mx-auto w-full pt-12 pb-20 px-6"
-        >
-            <div className="text-center mb-12">
-                <div className={`w-16 h-16 rounded-3xl flex items-center justify-center mx-auto mb-6 shadow-xl shadow-${selectedSubject.color}-500/20 bg-gradient-to-br from-${selectedSubject.color}-500 to-${selectedSubject.color}-600 text-white`}>
-                    <selectedSubject.icon size={32} />
-                </div>
-                <h1 className="text-4xl font-black text-zinc-900 dark:text-white tracking-tight mb-3">Study Mode</h1>
-                <p className="text-lg text-zinc-500 font-medium">How should we approach {selectedSubject.name}?</p>
-            </div>
-
-            <div className="space-y-4">
-                {contextOptions.map((option, i) => (
-                    <motion.button
-                        key={option.id}
-                        initial={{ opacity: 0, x: -20 }}
-                        animate={{ opacity: 1, x: 0 }}
-                        transition={{ ...transitionEase, delay: i * 0.1 }}
-                        whileHover={{
-                            boxShadow: "0 4px 6px -1px rgba(0, 0, 0, 0.05)",
-                        }}
-                        whileTap={{ scale: 0.99 }}
-                        onClick={() => handleContextSelect(option)}
-                        className="w-full bg-white dark:bg-zinc-900 p-6 rounded-[1.25rem] border border-zinc-200/60 dark:border-zinc-800 shadow-sm flex items-center gap-6 group transition-all duration-150 ease-[0.16,1,0.3,1]"
-                    >
-                        <div className={`w-16 h-16 rounded-2xl bg-${option.color}-50 dark:bg-${option.color}-900/10 flex items-center justify-center text-${option.color}-600 dark:text-${option.color}-400 shrink-0 group-hover:scale-110 transition-transform duration-300`}>
-                            <option.icon size={28} strokeWidth={1.5} />
-                        </div>
-                        <div className="text-left flex-1">
-                            <h3 className="text-xl font-bold text-zinc-900 dark:text-white mb-1">{option.title}</h3>
-                            <p className="text-sm text-zinc-500 font-medium pr-8">{option.desc}</p>
-                        </div>
-                        <div className="w-10 h-10 rounded-full bg-zinc-50 dark:bg-zinc-800 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all -translate-x-4 group-hover:translate-x-0">
-                            <ArrowLeft size={20} className="text-zinc-600 dark:text-zinc-300 rotate-180" />
-                        </div>
-                    </motion.button>
-                ))}
-            </div>
-        </motion.div>
-    );
-
-    const ChatView = () => (
-        <motion.div
+            key="context"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="flex flex-col h-full w-full relative"
+            transition={transitionEase}
+            className="max-w-2xl mx-auto w-full pt-16 px-6"
         >
-            {/* Chat Messages */}
-            <div className="flex-1 overflow-y-auto pt-24 pb-32 px-4 md:px-0 scroll-smooth">
-                <div className="max-w-3xl mx-auto space-y-6">
-                    <AnimatePresence initial={false}>
+            <div className="mb-12 text-center">
+                <div className="inline-flex items-center justify-center w-12 h-12 rounded-xl bg-white dark:bg-zinc-800 mb-6 text-zinc-900 dark:text-white shadow-sm border border-zinc-100">
+                    <selectedSubject.icon size={24} />
+                </div>
+                <h1 className="text-3xl font-semibold text-zinc-900 dark:text-white tracking-editorial mb-2">
+                    {selectedSubject.name}
+                </h1>
+                <p className="text-zinc-500 text-lg">Select a mode for this session</p>
+            </div>
+
+            <div className="space-y-3">
+                {contextOptions.map((option, i) => (
+                    <button
+                        key={option.id}
+                        onClick={() => handleContextSelect(option)}
+                        className="w-full bg-white dark:bg-zinc-800/50 p-5 rounded-xl border border-zinc-200 dark:border-zinc-800 hover:bg-zinc-50 dark:hover:bg-zinc-800 hover:border-zinc-300 dark:hover:border-zinc-700 hover:shadow-sm flex items-center gap-5 transition-all duration-200 group"
+                    >
+                        <div className="text-zinc-400 group-hover:text-zinc-600 dark:group-hover:text-zinc-300 transition-colors">
+                            <option.icon size={22} strokeWidth={1.5} />
+                        </div>
+                        <div className="text-left">
+                            <h3 className="text-base font-semibold text-zinc-900 dark:text-white">{option.title}</h3>
+                            <p className="text-sm text-zinc-500">{option.desc}</p>
+                        </div>
+                        <ChevronRight size={16} className="ml-auto text-zinc-300 group-hover:text-zinc-500 group-hover:translate-x-1 transition-all" />
+                    </button>
+                ))}
+            </div>
+        </motion.div>
+    );
+
+    const renderChatView = () => (
+        <motion.div
+            key="chat"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            className="flex h-full w-full relative"
+        >
+            {/* Main Chat Area - Centered */}
+            <div className="flex-1 flex flex-col h-full relative selection:bg-blue-100 dark:selection:bg-blue-900/30 bg-zinc-50 dark:bg-zinc-900">
+                {/* Header for Mobile/Small */}
+                <div className="lg:hidden p-4 flex items-center gap-2 border-b border-zinc-100 dark:border-zinc-800 bg-white dark:bg-zinc-900 z-20">
+                    <button onClick={handleBack} className="p-2 hover:bg-zinc-200 dark:hover:bg-zinc-800 rounded-full transition-colors">
+                        <ArrowLeft size={18} className="text-zinc-600 dark:text-zinc-400" />
+                    </button>
+                    <span className="text-sm font-semibold text-zinc-900 dark:text-white">AI Tutor</span>
+                </div>
+
+                {/* Scrollable Messages - Flex 1 to take available space */}
+                <div className="flex-1 overflow-y-auto px-6 pt-6 pb-6 scroll-smooth">
+                    <div className="max-w-3xl mx-auto space-y-8">
                         {messages.map((msg) => (
-                            <motion.div
-                                key={msg.id}
-                                initial={{ opacity: 0, y: 10, scale: 0.98 }}
-                                animate={{ opacity: 1, y: 0, scale: 1 }}
-                                transition={transitionEase}
-                                className={`flex gap-4 ${msg.sender === 'user' ? 'justify-end' : 'justify-start'}`}
-                            >
-                                {msg.sender === 'ai' && (
-                                    <div className="w-8 h-8 rounded-full bg-gradient-to-tr from-blue-600 to-indigo-600 flex items-center justify-center shrink-0 shadow-lg shadow-blue-500/20 mt-1">
-                                        <Sparkles size={14} className="text-white" fill="currentColor" />
+                            <div key={msg.id} className={`flex ${msg.sender === 'user' ? 'justify-end' : 'justify-start'}`}>
+                                <div className={`flex items-start gap-4 max-w-[80%] ${msg.sender === 'user' ? 'flex-row-reverse' : ''}`}>
+                                    {/* Avatar */}
+                                    <div className={`mt-1 w-8 h-8 shrink-0 flex items-center justify-center rounded-full ${msg.sender === 'ai' ? 'bg-zinc-100 dark:bg-zinc-800' : 'bg-transparent'}`}>
+                                        {msg.sender === 'ai' ? (
+                                            <Sparkles size={16} className="text-zinc-900 dark:text-white" />
+                                        ) : null}
                                     </div>
-                                )}
 
-                                <div className={`
-                                    max-w-[85%] md:max-w-[75%] px-6 py-3.5 text-[15px] leading-relaxed relative group
-                                    ${msg.sender === 'user'
-                                        ? 'bg-zinc-900 dark:bg-zinc-100 text-white dark:text-black rounded-[20px] rounded-tr-sm shadow-sm'
-                                        : 'bg-white dark:bg-zinc-900 border border-zinc-200/60 dark:border-zinc-800 text-zinc-800 dark:text-zinc-200 rounded-[20px] rounded-tl-sm shadow-sm'
-                                    }
-                                `}>
-                                    {msg.text}
+                                    {/* Message Bubble */}
+                                    <div className={`
+                                        prose prose-zinc dark:prose-invert max-w-none 
+                                        ${msg.sender === 'user'
+                                            ? 'bg-zinc-200/50 dark:bg-zinc-800 px-5 py-3 rounded-2xl rounded-tr-sm'
+                                            : ''}
+                                    `}>
+                                        <p className={`text-[15px] leading-7 whitespace-pre-wrap font-normal tracking-wide ${msg.sender === 'user' ? 'text-zinc-900 dark:text-white m-0' : 'text-zinc-900 dark:text-zinc-100'}`}>
+                                            {msg.text}
+                                        </p>
+                                    </div>
                                 </div>
-
-                                {msg.sender === 'user' && (
-                                    <div className="w-8 h-8 rounded-full bg-zinc-200 dark:bg-zinc-800 flex items-center justify-center shrink-0 mt-1">
-                                        <User size={14} className="text-zinc-500" />
-                                    </div>
-                                )}
-                            </motion.div>
+                            </div>
                         ))}
-                    </AnimatePresence>
+                        {isTyping && (
+                            <div className="flex justify-start">
+                                <div className="flex items-center gap-4">
+                                    <div className="w-8 h-8 bg-zinc-100 dark:bg-zinc-800 rounded-full flex items-center justify-center">
+                                        <Sparkles size={16} className="text-zinc-900 dark:text-white" />
+                                    </div>
+                                    <div className="flex gap-1.5 pt-2">
+                                        <div className="w-1.5 h-1.5 bg-zinc-400 rounded-full animate-bounce" style={{ animationDelay: '0ms' }} />
+                                        <div className="w-1.5 h-1.5 bg-zinc-400 rounded-full animate-bounce" style={{ animationDelay: '150ms' }} />
+                                        <div className="w-1.5 h-1.5 bg-zinc-400 rounded-full animate-bounce" style={{ animationDelay: '300ms' }} />
+                                    </div>
+                                </div>
+                            </div>
+                        )}
+                        <div ref={messagesEndRef} />
+                    </div>
+                </div>
 
-                    {isTyping && (
-                        <motion.div
-                            initial={{ opacity: 0, y: 5 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            className="flex gap-4"
-                        >
-                            <div className="w-8 h-8 rounded-full bg-gradient-to-tr from-blue-600 to-indigo-600 flex items-center justify-center shrink-0 shadow-lg shadow-blue-500/20">
-                                <Sparkles size={14} className="text-white" fill="currentColor" />
-                            </div>
-                            <div className="bg-white dark:bg-zinc-900 border border-zinc-200/60 dark:border-zinc-800 rounded-[20px] rounded-tl-sm px-5 py-4 flex gap-1 items-center shadow-sm h-12">
-                                <span className="w-1.5 h-1.5 bg-zinc-400 rounded-full animate-bounce [animation-delay:-0.3s]"></span>
-                                <span className="w-1.5 h-1.5 bg-zinc-400 rounded-full animate-bounce [animation-delay:-0.15s]"></span>
-                                <span className="w-1.5 h-1.5 bg-zinc-400 rounded-full animate-bounce"></span>
-                            </div>
-                        </motion.div>
-                    )}
-                    <div ref={messagesEndRef} />
+                {/* Input Area - Static at Bottom (Not Absolute) */}
+                <div className="p-6 bg-zinc-50 dark:bg-zinc-900">
+                    <div className="max-w-2xl mx-auto relative cursor-text group" onClick={(e) => {
+                        const textarea = e.currentTarget.querySelector('textarea');
+                        textarea?.focus();
+                    }}>
+                        {/* Redesigned Input */}
+                        <div className="relative flex items-end gap-3 bg-zinc-100 dark:bg-black p-3 rounded-[1.5rem] transition-shadow duration-300 ring-1 ring-transparent focus-within:ring-2 focus-within:ring-zinc-200 dark:focus-within:ring-zinc-800 shadow-sm">
+                            <button className="p-2 text-zinc-400 hover:text-zinc-900 dark:hover:text-white transition-colors duration-200 rounded-full hover:bg-black/5 dark:hover:bg-white/10 mb-0.5">
+                                <Plus size={20} strokeWidth={2} />
+                            </button>
+                            <textarea
+                                value={inputValue}
+                                onChange={(e) => setInputValue(e.target.value)}
+                                onKeyDown={(e) => e.key === 'Enter' && !e.shiftKey && (e.preventDefault(), handleSend())}
+                                placeholder="Message AI Tutor..."
+                                className="flex-1 max-h-40 min-h-[44px] pt-3.5 pb-2 bg-transparent border-none focus:ring-0 text-[15px] text-zinc-900 dark:text-white placeholder:text-zinc-500 resize-none leading-relaxed outline-none"
+                                rows={1}
+                            />
+                            <button
+                                onClick={handleSend}
+                                disabled={!inputValue.trim()}
+                                className={`p-2 rounded-full transition-colors duration-200 mb-0.5 ${inputValue.trim() ? 'bg-zinc-900 text-white hover:bg-black' : 'text-zinc-300 bg-transparent'}`}
+                            >
+                                <ArrowLeft size={18} className={inputValue.trim() ? "rotate-90" : "rotate-90 opacity-50"} strokeWidth={2.5} />
+                            </button>
+                        </div>
+                        <p className="text-center text-[10px] text-zinc-400 mt-3 font-medium">
+                            AI Tutor can make mistakes. Verify important information.
+                        </p>
+                    </div>
                 </div>
             </div>
 
-            {/* Input Area */}
-            <div className="absolute bottom-6 left-0 right-0 px-4">
-                <div className="max-w-3xl mx-auto relative group">
-                    <div className="absolute inset-0 bg-gradient-to-r from-blue-500/20 to-indigo-500/20 rounded-[28px] blur-xl opacity-0 group-focus-within:opacity-100 transition-opacity duration-500" />
-                    <div className="relative flex items-end gap-2 bg-white dark:bg-zinc-900 p-2 pl-5 rounded-[28px] border border-zinc-200/60 dark:border-zinc-800 shadow-[0_8px_32px_-8px_rgba(0,0,0,0.08)] dark:shadow-none transition-all duration-300 ring-4 ring-transparent focus-within:ring-blue-500/10">
-                        <button className="p-2.5 text-zinc-400 hover:bg-zinc-100 dark:hover:bg-zinc-800 rounded-full transition-colors mb-1">
-                            <Plus size={20} strokeWidth={2.5} />
-                        </button>
+            {/* Right Sidebar - Fixed */}
+            <div className="w-72 border-l border-zinc-100 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-900 hidden lg:flex flex-col p-4 space-y-3">
 
-                        <textarea
-                            value={inputValue}
-                            onChange={(e) => setInputValue(e.target.value)}
-                            onKeyDown={(e) => {
-                                if (e.key === 'Enter' && !e.shiftKey) {
-                                    e.preventDefault();
-                                    handleSend();
-                                }
-                            }}
-                            placeholder={`Message Gradeo AI about ${selectedSubject ? selectedSubject.name : 'anything'}...`}
-                            className="flex-1 max-h-32 min-h-[52px] py-3.5 bg-transparent border-none focus:ring-0 text-[15px] font-medium text-zinc-900 dark:text-white placeholder:text-zinc-400 resize-none"
-                            rows={1}
-                        />
-
-                        <button
-                            onClick={handleSend}
-                            disabled={!inputValue.trim() && !isTyping}
-                            className={`
-                                p-2.5 rounded-full mb-1 transition-all duration-300
-                                ${inputValue.trim()
-                                    ? 'bg-zinc-900 dark:bg-white text-white dark:text-black shadow-md hover:scale-105 active:scale-95'
-                                    : 'bg-zinc-100 dark:bg-zinc-800 text-zinc-300 dark:text-zinc-600 cursor-not-allowed'
-                                }
-                            `}
-                        >
-                            {isTyping ? <StopCircle size={20} fill="currentColor" /> : <ArrowLeft size={20} className="rotate-90" strokeWidth={3} />}
-                        </button>
+                {/* Current Session Card */}
+                <div className="bg-zinc-100 dark:bg-zinc-800/50 p-4 rounded-2xl border border-zinc-200 dark:border-zinc-800">
+                    <h2 className="text-[10px] font-bold text-zinc-400 uppercase tracking-widest mb-3">Current Session</h2>
+                    <div className="mb-3">
+                        <h3 className="text-lg font-bold text-zinc-900 dark:text-white leading-tight">{selectedSubject?.name}</h3>
+                        <p className="text-sm text-zinc-500 font-medium">{selectedContext?.title}</p>
                     </div>
-                    <p className="text-center text-[10px] text-zinc-400 font-medium mt-3">
-                        AI can make mistakes. Please check important information.
-                    </p>
+                    <div className="flex items-center gap-2 text-[10px] font-bold text-emerald-600 bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 px-2.5 py-1 rounded-full inline-flex shadow-sm">
+                        <span className="relative flex h-1.5 w-1.5">
+                            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                            <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-emerald-500"></span>
+                        </span>
+                        <span>ACTIVE</span>
+                    </div>
                 </div>
+
+                {/* New Session Button */}
+                <button
+                    onClick={() => {
+                        setStep('subject-selection');
+                        setSelectedSubject(null);
+                    }}
+                    className="w-full flex items-center justify-center gap-2 p-3 rounded-2xl border border-dashed border-zinc-300 dark:border-zinc-700 text-sm font-medium text-zinc-500 hover:text-zinc-900 dark:hover:text-white hover:bg-zinc-50 dark:hover:bg-zinc-800 transition-all group"
+                >
+                    <Plus size={16} className="group-hover:scale-110 transition-transform" />
+                    Start New Session
+                </button>
             </div>
         </motion.div>
     );
 
     return (
-        <div className="flex flex-col h-[calc(100vh-6rem)] relative overflow-hidden">
-            {/* Header - Conditional Rendering based on Step */}
-            <header className="absolute top-0 left-0 right-0 z-20 px-6 py-4 flex items-center justify-between pointer-events-none">
-                <motion.button
-                    initial={{ opacity: 0, x: -10 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    onClick={handleBack}
-                    className="p-3 bg-white/80 dark:bg-zinc-900/80 backdrop-blur-md border border-zinc-200/50 dark:border-zinc-800 rounded-full shadow-sm hover:bg-white dark:hover:bg-zinc-800 transition-all pointer-events-auto cursor-pointer group"
-                >
-                    <ArrowLeft size={20} className="text-zinc-500 group-hover:text-zinc-900 dark:group-hover:text-white transition-colors" />
-                </motion.button>
-
-                <div className="flex items-center gap-2 px-4 py-2 bg-white/80 dark:bg-zinc-900/80 backdrop-blur-md border border-zinc-200/50 dark:border-zinc-800 rounded-full shadow-sm pointer-events-auto">
-                    <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
-                    <span className="text-xs font-semibold text-zinc-600 dark:text-zinc-300">
-                        {step === 'subject-selection' ? 'AI Tutor' : step === 'context-selection' ? selectedSubject?.name : 'Active Session'}
-                    </span>
-                </div>
-
-                <div className="w-10"></div> {/* Spacer */}
-            </header>
+        <div className="flex flex-col h-[calc(100vh-4rem)] relative bg-zinc-50 dark:bg-zinc-950">
+            <div className="px-6 py-4">
+                <button onClick={handleBack} className="text-zinc-500 hover:text-zinc-900 transition-colors">
+                    <ArrowLeft size={20} />
+                </button>
+            </div>
 
             <AnimatePresence mode="wait">
-                {step === 'subject-selection' && <SubjectSelectionView key="subject" />}
-                {step === 'context-selection' && <ContextSelectionView key="context" />}
-                {step === 'chat' && <ChatView key="chat" />}
+                {step === 'subject-selection' && renderSubjectSelection()}
+                {step === 'context-selection' && renderContextSelection()}
+                {step === 'chat' && renderChatView()}
             </AnimatePresence>
         </div>
     );

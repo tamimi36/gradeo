@@ -299,18 +299,30 @@ class SubmissionList(Resource):
             db.session.add(submission)
             db.session.commit()
 
-            # NOTE: OCR processing has been disabled. Returning hardcoded success response.
-            # Original OCR/Celery code is backed up in old_code/submissions_old.py
+            # Trigger OCR processing (async with Celery)
+            from app.services.tasks.ocr_tasks import process_submission_ocr
+            from app.models.submission import OCRProcessingJob
+            from app import celery
 
-            # Update submission status to completed
-            submission.submission_status = 'completed'
-            submission.processed_at = datetime.utcnow()
+            # Dispatch Celery task
+            task = celery.send_task(
+                'app.services.tasks.ocr_tasks.process_submission_ocr',
+                args=[submission.id]
+            )
+
+            # Create OCR processing job record
+            ocr_job = OCRProcessingJob(
+                submission_id=submission.id,
+                celery_task_id=task.id,
+                job_status='queued'
+            )
+            db.session.add(ocr_job)
             db.session.commit()
 
             return {
                 'submission': submission.to_dict(),
-                'task_id': 'hardcoded-task-' + str(submission.id),
-                'message': 'Exam paper uploaded successfully. OCR processing completed (simulated).',
+                'task_id': task.id,
+                'message': 'Exam paper uploaded successfully. OCR processing has been queued.',
                 'status': 'success'
             }, 201
 
@@ -417,18 +429,45 @@ class SubmissionReprocess(Resource):
             return {'message': 'Access denied', 'status': 'error'}, 403
 
         try:
-            # NOTE: OCR reprocessing has been disabled. Returning hardcoded success response.
-            # Original OCR/Celery code is backed up in old_code/submissions_old.py
+            # Reset submission status
+            submission.submission_status = 'pending'
+            submission.processed_at = None
 
-            # Update submission status to completed
-            submission.submission_status = 'completed'
-            submission.processed_at = datetime.utcnow()
+            # Cancel any existing OCR jobs for this submission
+            from app.models.submission import OCRProcessingJob
+            from app import celery
+
+            existing_jobs = OCRProcessingJob.query.filter_by(
+                submission_id=submission.id
+            ).filter(OCRProcessingJob.job_status.in_(['queued', 'processing'])).all()
+
+            for job in existing_jobs:
+                # Revoke Celery task
+                if job.celery_task_id:
+                    celery.control.revoke(job.celery_task_id, terminate=True)
+                job.job_status = 'cancelled'
+
+            # Trigger new OCR processing
+            from app.services.tasks.ocr_tasks import process_submission_ocr
+
+            task = celery.send_task(
+                'app.services.tasks.ocr_tasks.process_submission_ocr',
+                args=[submission.id]
+            )
+
+            # Create new OCR processing job
+            ocr_job = OCRProcessingJob(
+                submission_id=submission.id,
+                celery_task_id=task.id,
+                job_status='queued'
+            )
+            db.session.add(ocr_job)
             db.session.commit()
 
             return {
                 'submission': submission.to_dict(),
-                'task_id': 'hardcoded-reprocess-' + str(submission.id),
-                'message': 'Submission reprocessing completed (simulated)',
+                'task_id': task.id,
+                'message': 'Submission queued for reprocessing',
                 'status': 'success'
             }, 200
 
@@ -557,6 +596,8 @@ class SubmissionOCRStatus(Resource):
     )
     def get(self, submission_id):
         """Get OCR job status"""
+        from app.models.submission import OCRProcessingJob
+
         current_user_id = get_jwt_identity()
         user = User.query.get(int(current_user_id))
         submission = Submission.query.get_or_404(submission_id)
@@ -564,24 +605,30 @@ class SubmissionOCRStatus(Resource):
         if not can_access_submission(submission, user):
             return {'message': 'Access denied', 'status': 'error'}, 403
 
-        # NOTE: OCR processing has been disabled. Returning hardcoded status.
-        # Original OCR/Celery code is backed up in old_code/submissions_old.py
+        # Get latest OCR job
+        job = OCRProcessingJob.query.filter_by(
+            submission_id=submission_id
+        ).order_by(OCRProcessingJob.created_at.desc()).first()
+
+        if not job:
+            return {
+                'status': 'no_job',
+                'message': 'No OCR processing job found'
+            }, 200
+
+        # Check Celery task status if job is processing
+        if job.job_status in ['queued', 'processing']:
+            from app import celery
+            try:
+                task = celery.AsyncResult(job.celery_task_id)
+                if task.state:
+                    job.job_status = task.state.lower()
+            except Exception:
+                pass  # Keep current status if we can't check
 
         return {
             'status': 'success',
-            'job': {
-                'id': 1,
-                'submission_id': submission_id,
-                'celery_task_id': 'hardcoded-task-' + str(submission_id),
-                'job_status': 'completed',
-                'retry_count': 0,
-                'max_retries': 3,
-                'error_details': None,
-                'started_at': submission.submitted_at.isoformat() if submission.submitted_at else None,
-                'completed_at': submission.processed_at.isoformat() if submission.processed_at else datetime.utcnow().isoformat(),
-                'created_at': submission.submitted_at.isoformat() if submission.submitted_at else None,
-                'updated_at': datetime.utcnow().isoformat()
-            }
+            'job': job.to_dict()
         }, 200
 
 
@@ -600,6 +647,8 @@ class SubmissionOCRResults(Resource):
     )
     def get(self, submission_id):
         """Get OCR results"""
+        from app.models.submission import OCRResult
+
         current_user_id = get_jwt_identity()
         user = User.query.get(int(current_user_id))
         submission = Submission.query.get_or_404(submission_id)
@@ -607,33 +656,13 @@ class SubmissionOCRResults(Resource):
         if not can_access_submission(submission, user):
             return {'message': 'Access denied', 'status': 'error'}, 403
 
-        # NOTE: OCR processing has been disabled. Returning hardcoded results.
-        # Original OCR/Celery code is backed up in old_code/submissions_old.py
+        ocr_results = OCRResult.query.filter_by(
+            submission_id=submission_id
+        ).all()
 
         return {
             'status': 'success',
-            'ocr_results': [
-                {
-                    'id': 1,
-                    'submission_id': submission_id,
-                    'ocr_service': 'simulated',
-                    'ocr_strategy_id': None,
-                    'raw_text': 'Sample OCR text (hardcoded)',
-                    'processed_text': 'Sample OCR text (hardcoded)',
-                    'confidence_score': 0.95,
-                    'raw_response': {},
-                    'bounding_boxes': [],
-                    'detected_language': 'en',
-                    'detected_breaks': [],
-                    'page_number': 1,
-                    'retry_count': 0,
-                    'processing_status': 'completed',
-                    'error_message': None,
-                    'processing_time_seconds': 0.0,
-                    'created_at': datetime.utcnow().isoformat(),
-                    'updated_at': datetime.utcnow().isoformat()
-                }
-            ]
+            'ocr_results': [result.to_dict() for result in ocr_results]
         }, 200
 
 
@@ -776,18 +805,30 @@ class SubmissionFromImages(Resource):
             db.session.add(submission)
             db.session.commit()
 
-            # NOTE: OCR processing has been disabled. Returning hardcoded success response.
-            # Original OCR/Celery code is backed up in old_code/submissions_old.py
+            # Trigger OCR processing (async with Celery)
+            from app.services.tasks.ocr_tasks import process_submission_ocr
+            from app.models.submission import OCRProcessingJob
+            from app import celery
 
-            # Update submission status to completed
-            submission.submission_status = 'completed'
-            submission.processed_at = datetime.utcnow()
+            # Dispatch Celery task
+            task = celery.send_task(
+                'app.services.tasks.ocr_tasks.process_submission_ocr',
+                args=[submission.id]
+            )
+
+            # Create OCR processing job record
+            ocr_job = OCRProcessingJob(
+                submission_id=submission.id,
+                celery_task_id=task.id,
+                job_status='queued'
+            )
+            db.session.add(ocr_job)
             db.session.commit()
 
             return {
                 'submission': submission.to_dict(),
-                'task_id': 'hardcoded-task-' + str(submission.id),
-                'message': f'PDF created from {len(images)} image(s) and uploaded successfully. OCR processing completed (simulated).',
+                'task_id': task.id,
+                'message': f'PDF created from {len(images)} image(s) and uploaded successfully. OCR processing has been queued.',
                 'status': 'success',
                 'page_count': pdf_result['page_count']
             }, 201
