@@ -197,6 +197,27 @@ const StudentAITutor: React.FC = () => {
         </motion.div>
     );
 
+    // Helper for Typewriter Effect
+    const Typewriter = ({ text, onComplete }: { text: string, onComplete?: () => void }) => {
+        const [display, setDisplay] = useState('');
+
+        useEffect(() => {
+            let i = 0;
+            const timer = setInterval(() => {
+                if (i < text.length) {
+                    setDisplay(prev => prev + text.charAt(i));
+                    i++;
+                } else {
+                    clearInterval(timer);
+                    onComplete?.();
+                }
+            }, 10); // Adjustable speed (ms per char) as requested "faster"
+            return () => clearInterval(timer);
+        }, [text]);
+
+        return <>{display}</>;
+    };
+
     const renderChatView = () => (
         <motion.div
             key="chat"
@@ -235,7 +256,11 @@ const StudentAITutor: React.FC = () => {
                                             : ''}
                                     `}>
                                         <p className={`text-[15px] leading-7 whitespace-pre-wrap font-normal tracking-wide ${msg.sender === 'user' ? 'text-zinc-900 dark:text-white m-0' : 'text-zinc-900 dark:text-zinc-100'}`}>
-                                            {msg.text}
+                                            {msg.sender === 'ai' ? (
+                                                <Typewriter text={msg.text} />
+                                            ) : (
+                                                msg.text
+                                            )}
                                         </p>
                                     </div>
                                 </div>
@@ -275,7 +300,7 @@ const StudentAITutor: React.FC = () => {
                                 onChange={(e) => setInputValue(e.target.value)}
                                 onKeyDown={(e) => e.key === 'Enter' && !e.shiftKey && (e.preventDefault(), handleSend())}
                                 placeholder="Message AI Tutor..."
-                                className="flex-1 max-h-40 min-h-[44px] pt-3.5 pb-2 bg-transparent border-none focus:ring-0 text-[15px] text-zinc-900 dark:text-white placeholder:text-zinc-500 resize-none leading-relaxed outline-none"
+                                className="flex-1 max-h-40 min-h-[40px] pt-2.5 pb-2 bg-transparent border-none focus:ring-0 text-[15px] text-zinc-900 dark:text-white placeholder:text-zinc-500 resize-none leading-relaxed outline-none"
                                 rows={1}
                             />
                             <button

@@ -16,6 +16,9 @@ import TeacherAnalytics from "./pages/teacher/TeacherAnalytics";
 import TeacherExamBuilder from "./pages/teacher/TeacherExamBuilder";
 import TeacherAIAssistant from "./pages/teacher/TeacherAIAssistant";
 import TeacherLibrary from "./pages/teacher/TeacherLibrary";
+import TeacherSettings from "./pages/teacher/TeacherSettings";
+import TeacherGrading from "./pages/teacher/TeacherGrading";
+import TeacherGradingDetail from "./pages/teacher/TeacherGradingDetail";
 import ClassDetail from "./pages/teacher/ClassDetail";
 import StudentDetail from "./pages/teacher/StudentDetail";
 import AdminDashboard from "./pages/admin/AdminDashboard";
@@ -24,12 +27,16 @@ import AdminAnalytics from "./pages/admin/AdminAnalytics";
 import AdminBackups from "./pages/admin/AdminBackups";
 import AdminSettings from "./pages/admin/AdminSettings";
 import SystemLogs from "./pages/admin/SystemLogs";
+import Register from "./pages/auth/Register";
+import Login from "./pages/auth/Login";
 
 function App() {
   return (
     <Router>
       <Routes>
         <Route path="/" element={<LandingPage />} />
+        <Route path="/register" element={<Register />} />
+        <Route path="/login" element={<Login />} />
 
         {/* Student Routes */}
         <Route path="/student" element={<DashboardLayout role="student" />}>
@@ -52,6 +59,9 @@ function App() {
           <Route path="exams" element={<TeacherExamBuilder />} />
           <Route path="ai-assistant" element={<TeacherAIAssistant />} />
           <Route path="library" element={<TeacherLibrary />} />
+          <Route path="settings" element={<TeacherSettings />} />
+          <Route path="grading" element={<TeacherGrading />} />
+          <Route path="grading/:id" element={<TeacherGradingDetail />} />
           <Route path="class/:id" element={<ClassDetail />} />
           <Route path="student/:id" element={<StudentDetail />} />
         </Route>

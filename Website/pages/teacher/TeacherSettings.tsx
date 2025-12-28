@@ -1,11 +1,10 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { motion } from 'framer-motion';
 import {
     User,
     Bell,
     Shield,
     Moon,
-    LogOut,
     ChevronRight,
     Globe,
     HelpCircle,
@@ -13,7 +12,7 @@ import {
     Lock
 } from 'lucide-react';
 
-const AdminSettings: React.FC = () => {
+const TeacherSettings: React.FC = () => {
     // Apple Motion Constants
     const transitionEase = { duration: 0.3, ease: [0.16, 1, 0.3, 1] };
 
@@ -21,8 +20,8 @@ const AdminSettings: React.FC = () => {
         {
             title: 'Account',
             items: [
-                { icon: User, label: 'Profile Information', value: 'System Admin' },
-                { icon: Mail, label: 'Email Address', value: 'admin@gradeo.com' },
+                { icon: User, label: 'Profile Information', value: 'Prof. Sarah Jenkins' },
+                { icon: Mail, label: 'Email Address', value: 'sarah.jenkins@gradeo.edu' },
                 { icon: Lock, label: 'Password & Security', value: 'Last changed 30d ago' },
             ]
         },
@@ -65,11 +64,11 @@ const AdminSettings: React.FC = () => {
                 <h3 className="text-sm font-semibold text-zinc-500 uppercase tracking-widest mb-3 px-1">Profile</h3>
                 <div className="bg-white dark:bg-zinc-900 rounded-xl border border-zinc-200 dark:border-zinc-800 p-4 flex items-center gap-4 shadow-sm">
                     <div className="w-14 h-14 bg-zinc-100 dark:bg-zinc-800 rounded-full flex items-center justify-center text-lg font-bold text-zinc-400">
-                        SA
+                        PS
                     </div>
                     <div>
-                        <h1 className="text-lg font-bold text-zinc-900 dark:text-white tracking-tight">System Admin</h1>
-                        <p className="text-zinc-500 font-medium text-xs">admin@gradeo.com</p>
+                        <h1 className="text-lg font-bold text-zinc-900 dark:text-white tracking-tight">Prof. Sarah Jenkins</h1>
+                        <p className="text-zinc-500 font-medium text-xs">sarah.jenkins@gradeo.edu</p>
                     </div>
                 </div>
             </motion.div>
@@ -130,4 +129,4 @@ const AdminSettings: React.FC = () => {
     );
 };
 
-export default AdminSettings;
+export default TeacherSettings;
